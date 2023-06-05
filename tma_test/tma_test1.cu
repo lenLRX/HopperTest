@@ -3,13 +3,30 @@
 #include "hopper_util/util.h"
 
 
+// code from
+// https://stackoverflow.com/questions/14038589/what-is-the-canonical-way-to-check-for-errors-using-the-cuda-runtime-api
+#define gpuErrchk(ans)                                                         \
+  { gpuAssert((ans), __FILE__, __LINE__); }
+inline void gpuAssert(cudaError_t code, const char *file, int line,
+                      bool abort = true) {
+  if (code != cudaSuccess) {
+    fprintf(stderr, "GPUassert: %s %s %d\n", cudaGetErrorString(code), file,
+            line);
+    if (abort)
+      exit(code);
+  }
+}
+
+
 #define ACCESS_SIZE 256
 #define WARP_NUM 16
 
 __global__ void test_tma_1(float* input, float* output, CUtensorMap* input_desc, int64_t copy_count) {
 
-  __shared__ float sm_buffer[WARP_NUM][ACCESS_SIZE];
-  __shared__ uint64_t sm_mbarrier[WARP_NUM];
+  extern __shared__ char sm_base[];
+  //__shared__ float sm_buffer[WARP_NUM][ACCESS_SIZE];
+  float* sm_buffer = (float*)sm_base;
+  uint64_t* sm_mbarrier = (uint64_t*)(sm_base + sizeof(float) * WARP_NUM * ACCESS_SIZE);
 
   // one thread per warp
   if (threadIdx.x % 32 != 0) {
@@ -32,11 +49,11 @@ __global__ void test_tma_1(float* input, float* output, CUtensorMap* input_desc,
     set_barrier_transaction_bytes(sm_mbarrier[threadIdx.y], ACCESS_SIZE * sizeof(float));
 
     SM90_TMA_LOAD_1D::copy(input_desc, sm_mbarrier[threadIdx.y],
-		    sm_buffer[threadIdx.y],
+		    &sm_buffer[threadIdx.y * ACCESS_SIZE],
 		    i);
     wait_barrier(sm_mbarrier[threadIdx.y], phase);
     ++phase;
-    dummy_sum += sm_buffer[threadIdx.y][0];
+    dummy_sum += sm_buffer[threadIdx.y*ACCESS_SIZE];
   }
   // dummy output
   output[threadIdx.y] = dummy_sum;
@@ -91,8 +108,14 @@ int main(int argc, char** argv) {
   int grid_dim = 114;
   dim3 block_dim(32, 16);
 
-  test_tma_1<<<grid_dim, block_dim>>>(data_input_device, data_output_device, input_tma_desc_device, buffer_size);
-  cudaDeviceSynchronize();
+  size_t sm_size = sizeof(float) * WARP_NUM * ACCESS_SIZE + sizeof(uint64_t) * WARP_NUM;
+
+  cudaFuncSetAttribute(test_tma_1,
+                       cudaFuncAttributeMaxDynamicSharedMemorySize,
+                       sm_size);
+
+  test_tma_1<<<grid_dim, block_dim, sm_size>>>(data_input_device, data_output_device, input_tma_desc_device, buffer_size);
+  gpuErrchk(cudaDeviceSynchronize());
 
 
 }
