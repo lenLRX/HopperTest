@@ -1,0 +1,4 @@
+test_l2_bw_float4 test time 12.82 bandwidth 7285.25G avg latency 404.03 outstanding 115.96
+test_l2_bw_stride test time  6.76 stride   32B bandwidth 6911.55G avg latency 483.18 outstanding 526.23
+test_l2_bw_stride test time  6.65 stride   64B bandwidth 7026.16G avg latency 405.01 outstanding 448.42
+test_l2_bw_stride test time 12.25 stride  128B bandwidth 3811.12G avg latency 423.28 outstanding 254.20
