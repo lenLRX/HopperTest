@@ -1,0 +1,4 @@
+test_l2_bw_float4 test time 25.48 bandwidth 7330.25G
+test_l2_bw_stride test time 53.67 stride   32B bandwidth 6960.41G
+test_l2_bw_stride test time 52.64 stride   64B bandwidth 7096.25G
+test_l2_bw_stride test time 98.19 stride  128B bandwidth 3804.58G
