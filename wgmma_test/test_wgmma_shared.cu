@@ -243,7 +243,6 @@ wgmma_m64n256k16_fmix_RS_test(float *gm_d, __half2 *gm_a, __half2 *gm_b,
   __half2 *sm_a = (__half2 *)sm_buff;                                               
   for (int i = threadIdx.x; i < M * K / 2; i += blockDim.x) {                        
     sm_a[i] = gm_a[i];
-    reinterpret_cast<__half2&>(reg_a[i]) = gm_a[i];
   }                                                                                  
                                                                                      
   __half2 *sm_b = (__half2 *)(sm_buff + sizeof(__half2) * M * K / 2);                
@@ -257,6 +256,10 @@ wgmma_m64n256k16_fmix_RS_test(float *gm_d, __half2 *gm_a, __half2 *gm_b,
   }                                                                                  
                                                                                      
   __syncthreads();                                                                   
+
+  for (int i = 0; i < sizeof(reg_a)/sizeof(__half2); i += 1) {                        
+    reinterpret_cast<__half2&>(reg_a[i]) = sm_a[i];
+  }                                                                                  
                                                                                      
   uint32_t sm_a_addr = static_cast<uint32_t>(__cvta_generic_to_shared(sm_a));        
   uint32_t sm_b_addr = static_cast<uint32_t>(__cvta_generic_to_shared(sm_b));        
@@ -564,7 +567,6 @@ wgmma_m64n128k16_fmix_RS_test(float *gm_d, __half2 *gm_a, __half2 *gm_b,
   __half2 *sm_a = (__half2 *)sm_buff;                                               
   for (int i = threadIdx.x; i < M * K / 2; i += blockDim.x) {                        
     sm_a[i] = gm_a[i];
-    reinterpret_cast<__half2&>(reg_a[i]) = gm_a[i];
   }                                                                                  
 										     
   __half2 *sm_b = (__half2 *)(sm_buff + sizeof(__half2) * M * K / 2);                
@@ -578,7 +580,12 @@ wgmma_m64n128k16_fmix_RS_test(float *gm_d, __half2 *gm_a, __half2 *gm_b,
   }                                                                                  
 										     
   __syncthreads();                                                                   
-										     
+
+  for (int i = 0; i < sizeof(reg_a)/sizeof(__half2); i += 1) {
+    reinterpret_cast<__half2&>(reg_a[i]) = sm_a[i];
+  }
+
+
   uint32_t sm_a_addr = static_cast<uint32_t>(__cvta_generic_to_shared(sm_a));        
   uint32_t sm_b_addr = static_cast<uint32_t>(__cvta_generic_to_shared(sm_b));        
 										     
@@ -871,7 +878,6 @@ wgmma_m64n64k16_fmix_RS_test(float *gm_d, __half2 *gm_a, __half2 *gm_b,
   __half2 *sm_a = (__half2 *)sm_buff;                                               
   for (int i = threadIdx.x; i < M * K / 2; i += blockDim.x) {                        
     sm_a[i] = gm_a[i];
-    reinterpret_cast<__half2&>(reg_a[i]) = gm_a[i];
   }                                                                                  
 										     
   __half2 *sm_b = (__half2 *)(sm_buff + sizeof(__half2) * M * K / 2);                
@@ -885,7 +891,11 @@ wgmma_m64n64k16_fmix_RS_test(float *gm_d, __half2 *gm_a, __half2 *gm_b,
   }                                                                                  
 										     
   __syncthreads();                                                                   
-										     
+
+  for (int i = 0; i < sizeof(reg_a)/sizeof(__half2); i += 1) {
+    reinterpret_cast<__half2&>(reg_a[i]) = sm_a[i];
+  }
+
   uint32_t sm_a_addr = static_cast<uint32_t>(__cvta_generic_to_shared(sm_a));        
   uint32_t sm_b_addr = static_cast<uint32_t>(__cvta_generic_to_shared(sm_b));        
 										     
@@ -1172,7 +1182,6 @@ wgmma_m64n32k16_fmix_RS_test(float *gm_d, __half2 *gm_a, __half2 *gm_b,
   __half2 *sm_a = (__half2 *)sm_buff;                                               
   for (int i = threadIdx.x; i < M * K / 2; i += blockDim.x) {                        
     sm_a[i] = gm_a[i];
-    reinterpret_cast<__half2&>(reg_a[i]) = gm_a[i];
   }                                                                                  
 										     
   __half2 *sm_b = (__half2 *)(sm_buff + sizeof(__half2) * M * K / 2);                
@@ -1186,7 +1195,11 @@ wgmma_m64n32k16_fmix_RS_test(float *gm_d, __half2 *gm_a, __half2 *gm_b,
   }                                                                                  
 										     
   __syncthreads();                                                                   
-										     
+
+  for (int i = 0; i < sizeof(reg_a)/sizeof(__half2); i += 1) {
+    reinterpret_cast<__half2&>(reg_a[i]) = sm_a[i];
+  }
+
   uint32_t sm_a_addr = static_cast<uint32_t>(__cvta_generic_to_shared(sm_a));        
   uint32_t sm_b_addr = static_cast<uint32_t>(__cvta_generic_to_shared(sm_b));        
 										     
@@ -1485,7 +1498,11 @@ wgmma_m64n16k16_fmix_RS_test(float *gm_d, __half2 *gm_a, __half2 *gm_b,
   }                                                                                  
 										     
   __syncthreads();                                                                   
-										     
+
+  for (int i = 0; i < sizeof(reg_a)/sizeof(__half2); i += 1) {
+    reinterpret_cast<__half2&>(reg_a[i]) = sm_a[i];
+  }
+
   uint32_t sm_a_addr = static_cast<uint32_t>(__cvta_generic_to_shared(sm_a));        
   uint32_t sm_b_addr = static_cast<uint32_t>(__cvta_generic_to_shared(sm_b));        
 										     
@@ -1771,7 +1788,6 @@ wgmma_m64n8k16_fmix_RS_test(float *gm_d, __half2 *gm_a, __half2 *gm_b,
   __half2 *sm_a = (__half2 *)sm_buff;                                               
   for (int i = threadIdx.x; i < M * K / 2; i += blockDim.x) {                        
     sm_a[i] = gm_a[i];
-    reinterpret_cast<__half2&>(reg_a[i]) = gm_a[i];
   }                                                                                  
                                                                                      
   __half2 *sm_b = (__half2 *)(sm_buff + sizeof(__half2) * M * K / 2);                
@@ -1785,7 +1801,11 @@ wgmma_m64n8k16_fmix_RS_test(float *gm_d, __half2 *gm_a, __half2 *gm_b,
   }                                                                                  
                                                                                      
   __syncthreads();                                                                   
-                                                                                     
+
+  for (int i = 0; i < sizeof(reg_a)/sizeof(__half2); i += 1) {
+    reinterpret_cast<__half2&>(reg_a[i]) = sm_a[i];
+  }
+
   uint32_t sm_b_addr = static_cast<uint32_t>(__cvta_generic_to_shared(sm_b));        
                                                                                      
   GmmaDescriptor desc_b;                                                     
