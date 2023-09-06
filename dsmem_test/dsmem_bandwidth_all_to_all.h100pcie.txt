@@ -1,0 +1,8 @@
+sm_size: 131072
+cluster 2 dsmem all to all duration   4.85ms read bandwidth: 3154.09GB
+sm_size: 131072
+cluster 4 dsmem all to all duration  53.25ms read bandwidth:  846.82GB
+sm_size: 131072
+cluster 8 dsmem all to all duration 191.83ms read bandwidth:  548.55GB
+sm_size: 131072
+cluster 16 dsmem all to all duration 552.34ms read bandwidth:  408.24GB
