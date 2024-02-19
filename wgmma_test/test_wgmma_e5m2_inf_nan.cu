@@ -31,9 +31,16 @@ template <> void init_data(float *data, int count, std::string method) {
 }
 
 template <> void init_data(__nv_fp8_storage_t *data, int count, std::string method) {
+  if (method == "nan") {
     for (int i = 0; i < count; ++i) {
       data[i] = 255;
     }
+  } else {
+    for (int i = 0; i < count; ++i) {
+      data[i] = 252;
+    }
+  }
+
 }
 
 
@@ -359,7 +366,7 @@ void test_m64n256k32_e5m2_RS(int argc, char **argv) {
 
     gpuErrchk(cudaMemcpy(mat_d_host, mat_d_dev, mat_c_size * sizeof(float),
                        cudaMemcpyDeviceToHost));
-    std::cout << "gemm nan e5m2: " << mat_d_host[0] << std::endl;
+    std::cout << "gemm e5m2 input: " << uint32_t(mat_a_host[0]) << " output: " << mat_d_host[0] << std::endl;
  }
 }
 
